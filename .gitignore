@@ -1,3 +1,4 @@
 **/__pycache__
-**/bert-base-cased-vocab.txt
+**/*.txt
 **/*.backup
+**/trie

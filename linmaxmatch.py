@@ -1,7 +1,12 @@
 from typing import List, Tuple, Dict, Any, Optional
+import string
+import sys
+
 from trie import Trie
 
-def precompute(V: List):
+sys.setrecursionlimit(int(1e8))
+
+def precompute(V: List) -> Tuple:
     """
     This function is an implementation of the precompute stage mentioned in the 
     paper Fast WordPiece Tokenization https://aclanthology.org/2021.emnlp-main.160/
@@ -45,7 +50,7 @@ def precompute(V: List):
     
     return r, r_hash
 
-def matchloop(s: str, i: int):
+def matchloop(s: str, i: int, R: Dict) -> Tuple:
     """
     This function is an implementation of the MATCHLOOP(s, i) 
     defined in the paper Fast WordPiece Tokenization https://aclanthology.org/2021.emnlp-main.160/
@@ -72,7 +77,7 @@ def matchloop(s: str, i: int):
     return tokens, u, i
 
 
-def originalWordPiece(u: str):
+def originalWordPiece(u: str, vocab: List) -> List:
     """
     The wordpiecepiece algorithm of bert defined by google. 
     Source: https://github.com/google-research/bert/blob/master/tokenization.py#L335-L358
@@ -117,7 +122,7 @@ def originalWordPiece(u: str):
     return output_tokens
 
 
-def linmaxmatch(w: str):
+def linmaxmatch(w: str, R: Dict, RH: Dict) -> List:
     """
     This function performs the LinMaxMatch as described in
     the paper Fast WordPiece Tokenization : https://aclanthology.org/2021.emnlp-main.160/
@@ -127,7 +132,7 @@ def linmaxmatch(w: str):
     :returns: sub-tokens for the word 
     """
     
-    tokens, u, i = matchloop(w+" ", 0)
+    tokens, u, i = matchloop(w+" ", 0, R)
 
     if i < len(w) or u not in [R, RH]:
         tokens = ["<unk>"]
@@ -137,15 +142,73 @@ def linmaxmatch(w: str):
 
     return tokens
 
+def e2eWordPiece(text: str, R: Dict, RH: Dict) -> List:
+    """
+    This function performs the end-to-end tokenization of a complete text
+    using the fast wordpiece tokenization modules. This is an implementation of
+    the E2EWORDPIECE(text) function described in the paper: https://aclanthology.org/2021.emnlp-main.160/
+
+    :param text: the complete text
+    
+    :returns: the tokens for the text
+    """
+
+    result, s, i = [], text + " ", 0
+
+    while i < len(s):
+        tokens, u, i = matchloop(s, i, R)
+        if not isWDBNDRY(s,i) or u not in [R, RH]:
+            tokens = ["<unk>"]
+
+        elif u == RH and len(tokens) == 0:
+            tokens = originalWordPiece("##")
+
+        result.extend(tokens)
+
+        while i < len(s) and not isWDBNDRY(s, i):
+            i += 1
+        
+        while i < len(s) and isSpace(s[i]):
+            i += 1
+    
+    return result
+
+        
+def isWDBNDRY(s, i) -> "bool":
+    """
+    This function checks if the character is the boundary character of the 
+    string or not.
+
+    :param s: the text
+    :param i: the index
+
+    :returns: whether it is the boundary or not.
+    """
+    return i >= len(s) or (i > 0 and isPunc(s[i-1]) or isSpace(s[i]) or isPunc(s[i]))
 
 
-if __name__ == "__main__":
+def isSpace(s) -> "bool":
+    """
+    This function checks if the character is a whitespace character or not.
+    """
+    return s in [" ", "\t", "\n", "\b"]
+
+def isPunc(s) -> "bool":
+    """
+    This function checks if the character is a string punctuation or not.
+    """
+    return s in string.punctuation
+
+
+# if __name__ == "__main__":
     
     
-    vocab = ["a", "abcdx", "##b", "##c", "##cdy", "##dz"]
-    R, RH = precompute(vocab)
+#     vocab = ["a", "abcdx", "##b", "##c", "##cdy", "##dz"]
+#     R, RH = precompute(vocab)
 
-    print(linmaxmatch("##bc"))
-    print(linmaxmatch("abcdz"))
-    print(linmaxmatch("##"))
+#     print(linmaxmatch("##bc"))
+#     print(linmaxmatch("abcdz"))
+#     print(linmaxmatch("##"))
+
+#     print(e2eWordPiece("abc dz abcdz"))
 

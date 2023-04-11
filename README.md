@@ -6,17 +6,22 @@ Tokenization is a fundamental part of almost all NLP tasks. BERT uses WordPiece 
 In this repository I have implemented just the single word tokenization of this algorithm. Reading the paper and analyzing was kind of difficult therefore I have created a simplified version of this algorithm using vanilla python. 
 
 
-The main code is present in the file `linmaxmatch.py`. I am working on the general text part of this algorithm and will upload it as soon as it's ready.
+The main code is present in the file `linmaxmatch.py`. 
 
-# Running the Program
-To run this algorithm simply run 
+[Update: 2023-04-12] I have implemented the end-to-end tokenization function module described in the paper. 
+
+# Running the Program [Update: 2023-04-12]
+
+To run this program you will need to run the following command in your terminal:
+
 ```{bash}
-python linmaxmatch.py
+python main.py --vocabulary <custom-vocabulary file> --text "single word/complete text"
 ```
-
-Make sure to update the vocabulary in the `__main__` function of the `linmaxmatch.py` script.
+This will execute the Fast WordPiece Tokenization algorithm by creating a Trie of your vocabulary and using that vocabulary to tokenize the text.
 
 For more details about this algorithm you can find it in [Google Research](https://ai.googleblog.com/2021/12/a-fast-wordpiece-tokenization-system.html)
+
+
 
 
 

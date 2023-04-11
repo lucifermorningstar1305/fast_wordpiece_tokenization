@@ -41,20 +41,3 @@ class Trie:
             start.isEndOfWord = True
 
         return r, r_hash
-
-# if __name__ == "__main__":
-    
-#     vocab = ["a", "abcdx", "##b", "##cdy", "##dz"]
-#     tr = Trie()
-#     rets = tr.build(vocab)
-#     print(rets)
-
-#     for r in rets:
-#         for c, child in r.children.items():
-#             print(child.chiv)
-
-
-
-
-
-
