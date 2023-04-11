@@ -198,17 +198,3 @@ def isPunc(s) -> "bool":
     This function checks if the character is a string punctuation or not.
     """
     return s in string.punctuation
-
-
-# if __name__ == "__main__":
-    
-    
-#     vocab = ["a", "abcdx", "##b", "##c", "##cdy", "##dz"]
-#     R, RH = precompute(vocab)
-
-#     print(linmaxmatch("##bc"))
-#     print(linmaxmatch("abcdz"))
-#     print(linmaxmatch("##"))
-
-#     print(e2eWordPiece("abc dz abcdz"))
-
